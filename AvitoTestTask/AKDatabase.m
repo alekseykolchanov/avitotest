@@ -52,20 +52,34 @@ NSString *const SYNC_ERROR_DOMAIN = @"Sync with local storage error";
     }];
 }
 
--(void)updateImageForUser:(User*)user withCompletion:(void (^) (UIImage *image, int userId, NSError *error))completion
+-(void)getImageForUser:(User*)user withCompletion:(void (^) (UIImage *image, int userId, NSError *error))completion
 {
     if (!user || ![user avatar_url])
     {
         if (completion)
             completion(nil,user?[[user u_id]intValue]:0,nil);
+        
+        return;
     }
     
     int user_id = [user.u_id intValue];
     
+    Image *savedImg = [self fetchImageWithUrl:user.avatar_url inManagedObjectContext:[[AKCoreDataController share]backgroundManagedObjectContext]];
+    
+    if (savedImg && [savedImg image_data])
+    {
+        if (completion)
+            completion([UIImage imageWithData:[savedImg image_data]],user_id,nil);
+        
+        return;
+    }
+    
+    NSString *image_url = [[user avatar_url]copy];
+    
     [[AKNetworkServer share]getImageAtUrl:[user avatar_url] withCompletion:^(UIImage *image, NSError *error) {
         if (!error){
             NSError *err;
-            [self syncRecievedImage:image forUserWithId:user_id error:&err];
+            [self syncRecievedImage:image forImageUrl:image_url error:&err];
             
             if (completion)
                 completion(image,user_id,nil);
@@ -91,6 +105,7 @@ NSString *const SYNC_ERROR_DOMAIN = @"Sync with local storage error";
     @catch (NSException *exception) {
         NSString *errorString = @"Error while syncing";
         NSDictionary *userInfoDict = @{ NSLocalizedDescriptionKey : errorString};
+        if (error != NULL)
         *error = [[NSError alloc] initWithDomain:SYNC_ERROR_DOMAIN
                                             code:401
                                         userInfo:userInfoDict];
@@ -107,7 +122,7 @@ NSString *const SYNC_ERROR_DOMAIN = @"Sync with local storage error";
     [objContext performBlockAndWait:^{
         
         
-        NSArray *savedUsers = [self getUsersWithIdFrom:[userIds firstObject] toId:[userIds lastObject] inManagedObjectContext:objContext];
+        NSArray *savedUsers = [self fetchUsersWithIdFrom:[userIds firstObject] toId:[userIds lastObject] inManagedObjectContext:objContext];
         
         NSDictionary *savedUsersDict = [NSDictionary dictionaryWithObjects:savedUsers forKeys:[savedUsers valueForKey:@"u_id"]];
         
@@ -148,25 +163,22 @@ NSString *const SYNC_ERROR_DOMAIN = @"Sync with local storage error";
     
 }
 
--(void)syncRecievedImage:(UIImage*)image forUserWithId:(int)user_id error:(NSError**)error
+-(UIImage*)syncRecievedImage:(UIImage*)image forImageUrl:(NSString *)urlString error:(NSError**)error
 {
-    if (user_id==0)
-        return;
+    if (!urlString || !image)
+        return image;
     
     NSManagedObjectContext *objContext = [[AKCoreDataController share]backgroundManagedObjectContext];
-    NSArray *users = [self getUsersWithIdFrom:@(user_id) toId:@(user_id) inManagedObjectContext:objContext];
-    
-    if (!users || [users count]==0)
-        return;
+    Image *savedImg = [self fetchImageWithUrl:urlString inManagedObjectContext:objContext];
     
     [objContext performBlockAndWait:^{
-        User *u = [users firstObject];
-        if (image)
+        if (savedImg)
         {
-            [u setImage_data:UIImageJPEGRepresentation(image, 0.8f)];
+            [savedImg setImage_data:UIImageJPEGRepresentation(image, 0.8f)];
         }else{
-            if (!u.image_data)
-                [u setImage_data:nil];
+            Image *nImage = [NSEntityDescription insertNewObjectForEntityForName:@"Image" inManagedObjectContext:objContext];
+            [nImage setUrl:urlString];
+            [nImage setImage_data:UIImageJPEGRepresentation(image, 0.8f)];
         }
         
         NSError *saveError;
@@ -176,6 +188,8 @@ NSString *const SYNC_ERROR_DOMAIN = @"Sync with local storage error";
         }
         
     }];
+    
+    return image;
 }
 
 -(BOOL)validateJSONDict:(NSDictionary*)jsonDict forClassWithName:(NSString*)className
@@ -194,7 +208,7 @@ NSString *const SYNC_ERROR_DOMAIN = @"Sync with local storage error";
 }
 
 #pragma mark - fetching
--(NSArray*)getUsersWithIdFrom:(NSNumber*)startId toId:(NSNumber*)lastId inManagedObjectContext:(NSManagedObjectContext*)objContext
+-(NSArray*)fetchUsersWithIdFrom:(NSNumber*)startId toId:(NSNumber*)lastId inManagedObjectContext:(NSManagedObjectContext*)objContext
 {
     if (!objContext)
         return nil;
@@ -219,6 +233,54 @@ NSString *const SYNC_ERROR_DOMAIN = @"Sync with local storage error";
     }];
     
     return users;
+}
+
+-(Image *)fetchImageWithUrl:(NSString*)urlString inManagedObjectContext:(NSManagedObjectContext*)objContext
+{
+    if (!objContext)
+        return nil;
+    
+    if (!urlString)
+        return nil;
+    
+    NSFetchRequest *fetchRequest = [NSFetchRequest fetchRequestWithEntityName:@"Image"];
+    
+    [fetchRequest setPredicate:[NSPredicate predicateWithFormat:@"url=%@",urlString]];
+    
+    __block NSArray *images;
+    
+    [objContext performBlockAndWait:^{
+        NSError *error;
+        images =  [objContext executeFetchRequest:fetchRequest error:&error];
+    }];
+    
+    if (!images || [images count]==0)
+        return nil;
+    
+    __block Image *resImage;
+    
+    [objContext performBlockAndWait:^{
+
+    if ([images count]>0)
+    {
+        [images enumerateObjectsUsingBlock:^(Image *img, NSUInteger idx, BOOL *stop) {
+            if (idx==0){
+                resImage = img;
+            }else{
+                [objContext deleteObject:img];
+            }
+        }];
+        
+        if ([images count]>1)
+        {
+            NSError *err;
+            [objContext save:&err];
+        }
+    }
+        
+    }];
+    
+    return resImage;
 }
 
 

@@ -13,4 +13,8 @@
 
 @property (nonatomic,strong) User *user;
 
+
+@property (nonatomic,weak) UIImageView *userAvatarIV;
+@property (nonatomic,weak) UILabel *userLoginLbl;
+
 @end

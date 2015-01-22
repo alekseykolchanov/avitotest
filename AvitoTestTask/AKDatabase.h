@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "User+AKUser.h"
+#import "modelClasses.h"
+
 
 @interface AKDatabase : NSObject
 
@@ -16,6 +17,6 @@
 
 -(void)updateUsersSinceUser:(User*)lastAvailableUser withCompletion:(void (^) (BOOL isLastUsers, NSArray *users, NSError *error))completion;
 
--(void)updateImageForUser:(User*)user withCompletion:(void (^) (UIImage *image, int userId, NSError *error))completion;
+-(void)getImageForUser:(User*)user withCompletion:(void (^) (UIImage *image, int userId, NSError *error))completion;
 
 @end

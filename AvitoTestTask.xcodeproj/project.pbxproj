@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		59543DE91A70A9B600FC3F78 /* Image.m in Sources */ = {isa = PBXBuildFile; fileRef = 59543DE81A70A9B600FC3F78 /* Image.m */; };
 		59D5AD4A1A701BC100B844E1 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D5AD491A701BC100B844E1 /* main.m */; };
 		59D5AD4D1A701BC100B844E1 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 59D5AD4C1A701BC100B844E1 /* AppDelegate.m */; };
 		59D5AD551A701BC100B844E1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 59D5AD541A701BC100B844E1 /* Images.xcassets */; };
@@ -35,6 +36,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		59543DE71A70A9B600FC3F78 /* Image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Image.h; sourceTree = "<group>"; };
+		59543DE81A70A9B600FC3F78 /* Image.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Image.m; sourceTree = "<group>"; };
+		59543DEA1A70A9D700FC3F78 /* modelClasses.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = modelClasses.h; sourceTree = "<group>"; };
 		59D5AD441A701BC100B844E1 /* AvitoTestTask.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AvitoTestTask.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		59D5AD481A701BC100B844E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		59D5AD491A701BC100B844E1 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -184,6 +188,9 @@
 			isa = PBXGroup;
 			children = (
 				59D5AD801A701EC600B844E1 /* avitotest.xcdatamodeld */,
+				59543DEA1A70A9D700FC3F78 /* modelClasses.h */,
+				59543DE71A70A9B600FC3F78 /* Image.h */,
+				59543DE81A70A9B600FC3F78 /* Image.m */,
 				59D5AD831A701F9C00B844E1 /* User.h */,
 				59D5AD841A701F9C00B844E1 /* User.m */,
 				59D5AD861A701FD700B844E1 /* User+AKUser.h */,
@@ -315,6 +322,7 @@
 				59D5AD781A701CEF00B844E1 /* AKDatabase.m in Sources */,
 				59D5AD921A7035A900B844E1 /* AKTableViewFooter.m in Sources */,
 				59D5AD7E1A701DF100B844E1 /* AKMainTableViewDS.m in Sources */,
+				59543DE91A70A9B600FC3F78 /* Image.m in Sources */,
 				59D5AD7B1A701D2000B844E1 /* AKCoreDataController.m in Sources */,
 				59D5AD4D1A701BC100B844E1 /* AppDelegate.m in Sources */,
 				59D5AD821A701EC600B844E1 /* avitotest.xcdatamodeld in Sources */,
@@ -507,6 +515,7 @@
 				59D5AD691A701BC100B844E1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		59D5AD6A1A701BC100B844E1 /* Build configuration list for PBXNativeTarget "AvitoTestTaskTests" */ = {
 			isa = XCConfigurationList;
@@ -515,6 +524,7 @@
 				59D5AD6C1A701BC100B844E1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

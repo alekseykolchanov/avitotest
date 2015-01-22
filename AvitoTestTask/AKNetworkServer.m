@@ -131,6 +131,8 @@ NSString *const IMAGE_ERROR_DOMAIN = @"ImageProcessing error";
     if (!dataContainer){
         NSString *errorString = @"Received data parse error";
         NSDictionary *userInfoDict = @{ NSLocalizedDescriptionKey : errorString};
+        
+        if (error != NULL)
         *error = [[NSError alloc] initWithDomain:PARSE_ERROR_DOMAIN
                                             code:401
                                         userInfo:userInfoDict];
@@ -146,6 +148,7 @@ NSString *const IMAGE_ERROR_DOMAIN = @"ImageProcessing error";
     {
         NSString *errorString = @"Received data parse error";
         NSDictionary *userInfoDict = @{ NSLocalizedDescriptionKey : errorString};
+        if (error != NULL)
         *error = [[NSError alloc] initWithDomain:PARSE_ERROR_DOMAIN
                                             code:401
                                         userInfo:userInfoDict];
@@ -155,6 +158,7 @@ NSString *const IMAGE_ERROR_DOMAIN = @"ImageProcessing error";
     if ([dataContainer length]>0 && !d){
         NSString *errorString = @"Received data parse error";
         NSDictionary *userInfoDict = @{ NSLocalizedDescriptionKey : errorString};
+        if (error != NULL)
         *error = [[NSError alloc] initWithDomain:PARSE_ERROR_DOMAIN
                                             code:401
                                         userInfo:userInfoDict];
@@ -178,6 +182,7 @@ NSString *const IMAGE_ERROR_DOMAIN = @"ImageProcessing error";
     @catch (NSException *exception) {
         NSString *errorString = @"Unable to get image from data";
         NSDictionary *userInfoDict = @{ NSLocalizedDescriptionKey : errorString};
+        if (error != NULL)
         *error = [[NSError alloc] initWithDomain:IMAGE_ERROR_DOMAIN
                                             code:401
                                         userInfo:userInfoDict];
@@ -196,6 +201,7 @@ NSString *const IMAGE_ERROR_DOMAIN = @"ImageProcessing error";
             items = nil;
             NSString *errorString = @"Received data parse error";
             NSDictionary *userInfoDict = @{ NSLocalizedDescriptionKey : errorString};
+            if (error != NULL)
             *error = [[NSError alloc] initWithDomain:PARSE_ERROR_DOMAIN
                                                 code:402
                                             userInfo:userInfoDict];

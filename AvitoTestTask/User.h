@@ -15,6 +15,5 @@
 @property (nonatomic, retain) NSString * login;
 @property (nonatomic, retain) NSNumber * u_id;
 @property (nonatomic, retain) NSString * avatar_url;
-@property (nonatomic, retain) NSData * image_data;
 
 @end

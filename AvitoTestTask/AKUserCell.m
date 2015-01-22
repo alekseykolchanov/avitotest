@@ -15,8 +15,7 @@
     
 }
 
-@property (nonatomic,weak) UIImageView *userAvatarIV;
-@property (nonatomic,weak) UILabel *userLoginLbl;
+
 
 @end
 
@@ -70,35 +69,4 @@
     // Configure the view for the selected state
 }
 
-
--(void)setUser:(User *)user
-{
-    _user = user;
-    
-    if (_user)
-    {
-        [[self userLoginLbl]setText:[_user login]];
-        
-        if ([_user image_data]){
-            [[self userAvatarIV]setImage:[UIImage imageWithData:[_user image_data]]];
-        }else if ([_user avatar_url]){
-            __weak AKUserCell *weakSelf = self;
-            [[AKDatabase share]updateImageForUser:_user withCompletion:^(UIImage *image, int userId, NSError *error) {
-                
-                AKUserCell *strongSelf = weakSelf;
-                if (!strongSelf)
-                    return;
-                
-                if (![strongSelf user] || ![[strongSelf user]u_id] || [[[strongSelf user]u_id]intValue]!=userId)
-                    return;
-                
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [[strongSelf userAvatarIV]setImage:image];
-                });
-                
-            }];
-        }
-    }
-    
-}
 @end

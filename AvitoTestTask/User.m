@@ -14,6 +14,5 @@
 @dynamic login;
 @dynamic u_id;
 @dynamic avatar_url;
-@dynamic image_data;
 
 @end

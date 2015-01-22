@@ -29,7 +29,6 @@ NSString *const CACHE_NAME = @"CACHE_NAME";
 @property (nonatomic,strong) NSNumber *isUpdatingError;
 @property (nonatomic,strong) NSNumber *isUpdating;
 
-
 @end
 
 
@@ -41,6 +40,8 @@ NSString *const CACHE_NAME = @"CACHE_NAME";
     {
         [[NSNotificationCenter defaultCenter]removeObserver:self name:NSManagedObjectContextDidSaveNotification  object:[[AKCoreDataController share]masterManagedObjectContext]];
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(masterManagedObjectContextDidSave:) name:NSManagedObjectContextDidSaveNotification object:[[AKCoreDataController share]masterManagedObjectContext]];
+    
+        
     }
     
     return self;
@@ -157,6 +158,7 @@ NSString *const CACHE_NAME = @"CACHE_NAME";
     return nil;
 }
 
+
 #pragma mark - Table View
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -197,6 +199,26 @@ NSString *const CACHE_NAME = @"CACHE_NAME";
     User *user = [self.fetchedResultsController objectAtIndexPath:indexPath];
     
     [cell setUser:user];
+    
+    [[cell userLoginLbl]setText:[user login]];
+    
+    if ([user avatar_url]){
+        __weak AKUserCell *weakCell = cell;
+        [[AKDatabase share]getImageForUser:user withCompletion:^(UIImage *image, int userId, NSError *error) {
+            
+            AKUserCell *strongCell = weakCell;
+            if (!strongCell)
+                return;
+            
+            if (![strongCell user] || ![[strongCell user]u_id] || [[[strongCell user]u_id]intValue]!=userId)
+                return;
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[strongCell userAvatarIV]setImage:image];
+            });
+            
+        }];
+    }
 }
 
 #pragma mark - Fetched results controller
